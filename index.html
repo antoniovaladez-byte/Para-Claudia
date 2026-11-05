@@ -1,645 +1,91 @@
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+const CHAT_ID = "5838304963";
 
-<title>Una sorpresa para Claudia 💌</title>
+const MENSAJE =
+  "❤️ AVISO DESDE LA PÁGINA DE CLAUDIA ❤️\n\n" +
+  "Alguien confirmó que quiere hablar contigo.\n\n" +
+  "La solicitud se realizó desde la página especial de Claudia.\n\n" +
+  "Fecha: ";
 
-<style>
-* {
-  box-sizing: border-box;
-}
+function enviarTelegram(mensaje) {
+  const token = PropertiesService
+    .getScriptProperties()
+    .getProperty("TELEGRAM_BOT_TOKEN");
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  min-height: 100dvh;
-  background: linear-gradient(135deg, #19152e, #43265c);
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  overflow-x: hidden;
-}
-
-.card {
-  width: 100%;
-  max-width: 480px;
-  padding: 35px 25px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 25px;
-  box-shadow: 0 15px 50px rgba(0,0,0,0.3);
-  position: relative;
-  z-index: 1;
-}
-
-h1 {
-  font-size: 29px;
-  line-height: 1.4;
-}
-
-p {
-  font-size: 17px;
-  line-height: 1.7;
-  color: #e5d9f2;
-  white-space: pre-line;
-}
-
-button {
-  border: none;
-  background: #d5adff;
-  color: #241335;
-  border-radius: 30px;
-  padding: 15px 25px;
-  margin: 8px 5px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-button:hover {
-  background: #f1c9ff;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-.secundario {
-  background: rgba(255,255,255,0.12);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.3);
-}
-
-.emoji {
-  font-size: 55px;
-  margin-bottom: 15px;
-}
-
-.etiqueta {
-  color: #d5adff;
-  font-size: 12px;
-  letter-spacing: 2px;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.botones {
-  margin-top: 20px;
-  min-height: 65px;
-}
-
-.estado {
-  color: #f4c5ff;
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-.animacion {
-  animation: aparecer 0.5s ease;
-}
-
-@keyframes aparecer {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.corazon {
-  position: fixed;
-  bottom: -40px;
-  font-size: 25px;
-  pointer-events: none;
-  animation: flotar 4.5s linear forwards;
-}
-
-@keyframes flotar {
-  to {
-    transform: translateY(-110vh) rotate(35deg);
-    opacity: 0;
-  }
-}
-
-.escapando {
-  position: fixed;
-  z-index: 10;
-}
-</style>
-</head>
-
-<body>
-
-<div class="card animacion" id="card">
-
-  <div class="etiqueta" id="etiqueta">
-    Una pequeña aventura
-  </div>
-
-  <div class="emoji" id="emoji">💌</div>
-
-  <h1 id="titulo">Hola, Claudia.</h1>
-
-  <p id="texto">
-    Fue un gusto haber coincidido contigo.
-    Como despedida, ayúdame a contestar
-    algunas preguntas.
-  </p>
-
-  <div class="botones" id="botones"></div>
-  <div class="estado" id="estado"></div>
-
-</div>
-
-<script>
-
-// ==================================
-// CONFIGURACIÓN DEL FORMULARIO
-// ==================================
-
-const ENDPOINT =
-  "https://formsubmit.io/f/6582b6d9-6408-4b0f-b30c-2ca3130f145c";
-
-let intentos = 0;
-let enviando = false;
-let ultimoMovimiento = 0;
-
-// ==================================
-// FUNCIONES GENERALES
-// ==================================
-
-function elemento(id) {
-  return document.getElementById(id);
-}
-
-function boton(texto, accion, secundario = false) {
-  const b = document.createElement("button");
-
-  b.textContent = texto;
-  b.type = "button";
-
-  if (secundario) {
-    b.className = "secundario";
+  if (!token) {
+    throw new Error("No se encontró el token de Telegram.");
   }
 
-  b.addEventListener("click", accion);
+  const url =
+    "https://api.telegram.org/bot" +
+    token +
+    "/sendMessage";
 
-  elemento("botones").appendChild(b);
+  const respuesta = UrlFetchApp.fetch(url, {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify({
+      chat_id: CHAT_ID,
+      text: mensaje
+    }),
+    muteHttpExceptions: true
+  });
 
-  return b;
+  const resultado = JSON.parse(
+    respuesta.getContentText()
+  );
+
+  if (!resultado.ok) {
+    throw new Error(respuesta.getContentText());
+  }
+
+  return resultado;
 }
 
-function mostrar(etiqueta, emoji, titulo, texto) {
+// Recibe la confirmación desde GitHub Pages
+function doPost(e) {
+  try {
+    const datos = e && e.parameter
+      ? e.parameter
+      : {};
 
-  document.querySelectorAll(".escapando")
-    .forEach(b => b.remove());
-
-  elemento("etiqueta").textContent = etiqueta;
-  elemento("emoji").textContent = emoji;
-  elemento("titulo").textContent = titulo;
-  elemento("texto").textContent = texto;
-
-  elemento("botones").replaceChildren();
-  elemento("estado").textContent = "";
-
-  const card = elemento("card");
-
-  card.classList.remove("animacion");
-  void card.offsetWidth;
-  card.classList.add("animacion");
-}
-
-// ==================================
-// PANTALLAS
-// ==================================
-
-function pantalla(n) {
-
-  // BIENVENIDA
-  if (n === 0) {
-
-    mostrar(
-      "Una pequeña aventura",
-      "💌",
-      "Hola, Claudia.",
-      "Fue un gusto haber coincidido contigo.\n\nComo despedida, ayúdame a contestar algunas preguntas."
-    );
-
-    boton(
-      "Comencemos ✨",
-      () => pantalla(1)
-    );
-  }
-
-  // PREGUNTA DE LA ABEJA
-  else if (n === 1) {
-
-    mostrar(
-      "Pregunta 1",
-      "🐝",
-      "¿Qué hace una abeja en el gimnasio?",
-      "Piénsalo bien. Es una pregunta extremadamente seria."
-    );
-
-    boton(
-      "No sé, ¿qué hace? 🤨",
-      () => pantalla(2)
-    );
-  }
-
-  // RESPUESTA DEL CHISTE
-  else if (n === 2) {
-
-    mostrar(
-      "Respuesta oficial",
-      "💃🐝",
-      "¡Zum-ba!",
-      "Sí, hice una página web para contarte ese chiste.\n\nPerdón, pero no tanto. 😂"
-    );
-
-    boton(
-      "Qué chiste tan malo 🙄",
-      () => pantalla(3)
-    );
-  }
-
-  // BOTÓN QUE SE ESCAPA
-  else if (n === 3) {
-
-    mostrar(
-      "Pregunta 2",
-      "👀",
-      "¿Me vas a extrañar aunque sea un poquito?",
-      "Cuidado, esta pregunta tiene un botón con voluntad propia."
-    );
-
-    boton(
-      "Sí, un poquito ❤️",
-      () => pantalla(4)
-    );
-
-    intentos = 0;
-
-    const travieso = boton(
-      "No, para nada 😒",
-      () => {
-        if (intentos >= 4) {
-          pantalla(4);
-        }
-      },
-      true
-    );
-
-    function escapar(e) {
-
-      if (intentos >= 4) return;
-
-      if (
-        e.type === "pointerenter" &&
-        e.pointerType === "touch"
-      ) {
-        return;
-      }
-
-      const ahora = Date.now();
-
-      if (ahora - ultimoMovimiento < 250) {
-        return;
-      }
-
-      ultimoMovimiento = ahora;
-      intentos++;
-
-      travieso.classList.add("escapando");
-
-      const ancho = travieso.offsetWidth || 180;
-      const alto = travieso.offsetHeight || 50;
-
-      const maxX = Math.max(
-        0,
-        window.innerWidth - ancho - 20
-      );
-
-      const maxY = Math.max(
-        0,
-        window.innerHeight - alto - 20
-      );
-
-      travieso.style.left =
-        Math.random() * maxX + "px";
-
-      travieso.style.top =
-        Math.random() * maxY + "px";
-
-      elemento("estado").textContent =
-        "¡JAJAJA, casi lo atrapas! 😂";
-
-      if (intentos >= 4) {
-
-        travieso.textContent =
-          "Está bien, ganaste 😭";
-
-        travieso.classList.remove("escapando");
-
-        travieso.style.left = "";
-        travieso.style.top = "";
-      }
+    if (datos.accion !== "confirmar_aviso") {
+      throw new Error("Solicitud no válida.");
     }
 
-    travieso.addEventListener(
-      "pointerenter",
-      escapar
+    const fecha = Utilities.formatDate(
+      new Date(),
+      "America/Mexico_City",
+      "dd/MM/yyyy HH:mm:ss"
     );
 
-    travieso.addEventListener(
-      "pointerdown",
-      e => {
-        if (intentos < 4) {
-          e.preventDefault();
-          escapar(e);
-        }
-      }
-    );
-  }
+    enviarTelegram(MENSAJE + fecha);
 
-  // RESPUESTA
-  else if (n === 4) {
+    return ContentService
+      .createTextOutput("OK");
 
-    mostrar(
-      "Sin respuestas incorrectas",
-      "❤️",
-      "Está bien, Claudia.",
-      "No importa cuál hayas elegido.\n\nYo sí voy a recordar con mucho cariño nuestros momentos juntos."
-    );
+  } catch (error) {
+    console.error(error);
 
-    boton(
-      "Continuar ✨",
-      () => pantalla(5)
-    );
-  }
-
-  // RECUERDOS
-  else if (n === 5) {
-
-    mostrar(
-      "Pregunta 3",
-      "💭",
-      "¿Qué hacemos con los recuerdos bonitos?",
-      "Puedes elegir la respuesta que más te guste."
-    );
-
-    boton(
-      "Guardarlos con cariño ❤️",
-      () => pantalla(6)
-    );
-
-    boton(
-      "Sonreír al recordarlos ✨",
-      () => pantalla(6),
-      true
-    );
-  }
-
-  else if (n === 6) {
-
-    mostrar(
-      "Una buena respuesta",
-      "✨",
-      "Yo elegiría las dos.",
-      "No hace falta olvidar lo bonito para poder seguir adelante."
-    );
-
-    boton(
-      "Una pregunta más 👀",
-      () => pantalla(7)
-    );
-  }
-
-  // PREGUNTA PERSONAL
-  else if (n === 7) {
-
-    mostrar(
-      "Pregunta 4",
-      "💜",
-      "¿Sabes qué fue lo que más me gustó de haberte conocido?",
-      "Pista: no fueron mis chistes."
-    );
-
-    boton(
-      "A ver, sorpréndeme",
-      () => pantalla(8)
-    );
-
-    boton(
-      "Tus chistes no, seguro 😂",
-      () => pantalla(8),
-      true
-    );
-  }
-
-  // MENSAJE DE CARIÑO
-  else if (n === 8) {
-
-    mostrar(
-      "Lo que me llevo",
-      "🌷",
-      "Tu manera de ser.",
-      "Que sin siquiera intentarlo, lograste inspirarme de muchas maneras.\n\nMe gustó tu forma de pensar, tu personalidad y esa manera tan tuya de ver el mundo.\n\nAunque nuestro tiempo juntos fue distinto a lo que imaginé, me alegra muchísimo haberte conocido."
-    );
-
-    boton(
-      "Seguir ❤️",
-      () => pantalla(9)
-    );
-  }
-
-  // MENSAJE IMPORTANTE
-  else if (n === 9) {
-
-    mostrar(
-      "Algo importante",
-      "❤️",
-      "Quiero que sepas algo.",
-      "Lo que siento por ti no desaparece simplemente porque las cosas no hayan resultado como esperábamos.\n\nTe sigo queriendo, Claudia. Y precisamente por eso quiero respetar tu decisión, aunque no sea la que yo hubiera elegido.\n\nNo tienes que cambiar de opinión, darme explicaciones ni responder a esto. No es lo que busco."
-    );
-
-    boton(
-      "Continuar ✨",
-      () => pantalla(10)
-    );
-  }
-
-  // DESPEDIDA
-  else if (n === 10) {
-
-    mostrar(
-      "Nuestra despedida",
-      "💌",
-      "Gracias por todo, Claudia.",
-      "Me hubiera gustado compartir muchas más cosas contigo, no voy a negarlo.\n\nPero entiendo que no siempre podemos construir la historia que imaginamos, incluso cuando lo que sentimos es sincero.\n\nMe quedo con lo bonito que vivimos, con lo que aprendí de ti y con el cariño que te tengo.\n\nDeseo de corazón que encuentres tranquilidad, felicidad y muchas razones para sonreír.\n\nFue muy bonito coincidir contigo. ❤️\n\nP. D. Perdón por el chiste de la abeja. Ese sí fue imperdonable. 🐝😂"
-    );
-
-    corazones();
-
-    boton(
-      "Una última cosa...",
-      () => pantalla(11)
-    );
-  }
-
-  // ÚLTIMO BOTÓN
-  else if (n === 11) {
-
-    mostrar(
-      "Una última cosa",
-      "🤍",
-      "Aquí estaré.",
-      "Si algún día necesitas hablar, necesitas ayuda o simplemente quieres que alguien te escuche, puedes usar este botón.\n\nNo tienes que explicar nada ahora. Solo presiona cuando tú quieras."
-    );
-
-    boton(
-      "Necesito hablar contigo ❤️",
-      () => pantalla(12)
-    );
-
-    boton(
-      "Volver al principio ↺",
-      () => pantalla(0),
-      true
-    );
-  }
-
-  // CONFIRMACIÓN
-  else if (n === 12) {
-
-    mostrar(
-      "Solo si tú quieres",
-      "💌",
-      "¿Quieres enviarme un aviso?",
-      "Si confirmas, recibiré una notificación de FormSubmit indicando que alguien presionó el botón de esta página.\n\nNo se enviará ningún mensaje personal ni se identificará automáticamente quién lo pulsó."
-    );
-
-    const confirmar = boton(
-      "Sí, avisarle ❤️",
-      () => enviarAviso(confirmar)
-    );
-
-    boton(
-      "Ahora no",
-      () => pantalla(11),
-      true
-    );
+    return ContentService
+      .createTextOutput("ERROR");
   }
 }
 
-// ==================================
-// ENVÍO CORREGIDO A FORMSUBMIT
-// ==================================
-
-function enviarAviso(b) {
-
-  if (enviando) return;
-
-  enviando = true;
-
-  // Crear formulario HTML tradicional
-  const formulario = document.createElement("form");
-
-  formulario.method = "POST";
-  formulario.action = ENDPOINT;
-  formulario.style.display = "none";
-
-  // Datos que recibirá FormSubmit
-  const campos = {
-    "Full name": "Aviso desde la página de Claudia",
-    "Email": "",
-    "Topic": "Other",
-    "Message": "Alguien confirmó que quiere hablar contigo desde la página de Claudia."
-  };
-
-  // Agregar campos ocultos
-  for (const [nombre, valor] of Object.entries(campos)) {
-
-    const input = document.createElement("input");
-
-    input.type = "hidden";
-    input.name = nombre;
-    input.value = valor;
-
-    formulario.appendChild(input);
-  }
-
-  // Agregar formulario al documento
-  document.body.appendChild(formulario);
-
-  // Evitar pulsaciones repetidas
-  b.disabled = true;
-  b.textContent = "Enviando aviso...";
-
-  // Enviar y abrir respuesta de FormSubmit
-  formulario.submit();
+// Prueba desde el editor
+function probarTelegram() {
+  enviarTelegram(
+    "❤️ ¡Prueba exitosa! Tu bot sigue funcionando."
+  );
 }
 
-// ==================================
-// ANIMACIÓN DE CORAZONES
-// ==================================
+// Prueba del aviso que recibirá el usuario
+function probarAvisoClaudia() {
+  const resultado = doPost({
+    parameter: {
+      accion: "confirmar_aviso"
+    }
+  });
 
-function corazones() {
-
-  for (let i = 0; i < 25; i++) {
-
-    setTimeout(() => {
-
-      const corazon =
-        document.createElement("div");
-
-      corazon.className = "corazon";
-
-      const emojis = [
-        "❤️",
-        "💕",
-        "💜",
-        "✨",
-        "🤍"
-      ];
-
-      corazon.textContent =
-        emojis[Math.floor(
-          Math.random() * emojis.length
-        )];
-
-      corazon.style.left =
-        Math.random() * 100 + "vw";
-
-      document.body.appendChild(corazon);
-
-      setTimeout(() => {
-        corazon.remove();
-      }, 5000);
-
-    }, i * 130);
-  }
+  Logger.log(resultado.getContent());
 }
-
-// ==================================
-// INICIAR LA PÁGINA
-// ==================================
-
-pantalla(0);
-
-</script>
-
-</body>
-</html>
