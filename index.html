@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Una sorpresa para Claudia 💌</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg,#19152e,#43265c);
+  color: white;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+.card {
+  width: 90%;
+  max-width: 460px;
+  padding: 35px 25px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 25px;
+  box-shadow: 0 15px 50px #0005;
+}
+h1 { font-size: 29px; line-height: 1.3; }
+p { font-size: 18px; line-height: 1.6; color: #e5d9f2; }
+button {
+  border: none;
+  background: #d5adff;
+  color: #241335;
+  border-radius: 30px;
+  padding: 15px 25px;
+  margin: 10px 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+button:hover { background: #f1c9ff; }
+.emoji { font-size: 55px; }
+.fade { animation: fade .5s ease; }
+@keyframes fade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.heart {
+  position: fixed;
+  bottom: -40px;
+  font-size: 25px;
+  animation: float 4s linear forwards;
+  pointer-events: none;
+}
+@keyframes float {
+  to { transform: translateY(-110vh) rotate(30deg); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="card fade" id="card">
+  <div class="emoji" id="emoji">👀</div>
+  <h1 id="titulo">Claudia, necesito tu ayuda...</h1>
+  <p id="texto">Es algo muy importante. Bueno, más o menos. 😂</p>
+  <div id="botones">
+    <button onclick="pantalla(1)">A ver, dime</button>
+  </div>
+</div>
+
+<script>
+let intentos = 0;
+
+function mostrar(emoji,titulo,texto,botones) {
+  const card = document.getElementById("card");
+  card.classList.remove("fade");
+  void card.offsetWidth;
+  card.classList.add("fade");
+  document.getElementById("emoji").textContent = emoji;
+  document.getElementById("titulo").textContent = titulo;
+  document.getElementById("texto").textContent = texto;
+  document.getElementById("botones").innerHTML = botones;
+}
+
+function pantalla(n) {
+  if(n===0) {
+    mostrar("👀","Claudia, necesito tu ayuda...",
+    "Es algo muy importante. Bueno, más o menos. 😂",
+    '<button onclick="pantalla(1)">A ver, dime</button>');
+  }
+  if(n===1) {
+    mostrar("🤔","Primera pregunta...",
+    "¿Qué tan curiosa eres?",
+    '<button onclick="pantalla(2)">Muchísimo 👀</button>'+
+    '<button onclick="pantalla(2)">Nada... bueno, sí 😂</button>');
+  }
+  if(n===2) {
+    mostrar("😈","Una pequeña prueba...",
+    "Para continuar tienes que atrapar el botón. ¡Suerte!",
+    '<button id="escapa" onpointerenter="escapar()" onclick="atrapado()">Atrápame 😜</button>'+
+    '<button onclick="pantalla(3)">Me rindo 😂</button>');
+  }
+  if(n===3) {
+    mostrar("😂","¡JAJAJA!",
+    "Bueno, suficiente sufrimiento. Ahora sí viene lo importante...",
+    '<button onclick="pantalla(4)">Continúa 👀</button>');
+  }
+  if(n===4) {
+    mostrar("💌","La verdad es que...",
+    "Hice toda esta página solamente para sacarte una sonrisa. Espero haberlo conseguido. ❤️",
+    '<button onclick="pantalla(5)">¿Y la sorpresa? ✨</button>');
+  }
+  if(n===5) {
+    mostrar("❤️","¡Sorpresa, Claudia!",
+    "Me gusta mucho tu forma de ser y quería recordarte que eres alguien muy especial. ✨",
+    '<button onclick="pantalla(0)">Volver a empezar 🔄</button>');
+    corazones();
+  }
+}
+
+function escapar() {
+  const boton = document.getElementById("escapa");
+  if(!boton) return;
+  intentos++;
+  if(intentos >= 5) {
+    boton.textContent = "¡Está bien, ganaste! 😂";
+    boton.onpointerenter = null;
+    return;
+  }
+  boton.style.position = "fixed";
+  boton.style.left = (10+Math.random()*55)+"vw";
+  boton.style.top = (10+Math.random()*65)+"vh";
+}
+
+function atrapado() {
+  pantalla(3);
+}
+
+function corazones() {
+  for(let i=0;i<25;i++) {
+    setTimeout(()=>{
+      const h=document.createElement("div");
+      h.className="heart";
+      h.textContent=["❤️","💕","✨","💜"][Math.floor(Math.random()*4)];
+      h.style.left=Math.random()*100+"vw";
+      h.style.animationDuration=(3+Math.random()*3)+"s";
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),6500);
+    },i*120);
+  }
+}
+</script>
+</body>
+</html>
