@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hasta pronto, Claudia 🤍</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #19152e, #43265c);
+  color: white;
+  overflow: hidden;
+}
+
+.card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 480px;
+  padding: 45px 30px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+  animation: aparecer 1s ease;
+}
+
+.emoji {
+  font-size: 65px;
+}
+
+h1 {
+  font-size: 30px;
+  margin: 20px 0;
+}
+
+p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #e5d9f2;
+}
+
+.estado {
+  font-size: 14px;
+  color: #d5adff;
+  margin-bottom: 20px;
+}
+
+.corazon {
+  position: fixed;
+  bottom: -40px;
+  font-size: 25px;
+  pointer-events: none;
+  animation: flotar 5s linear forwards;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes flotar {
+  to {
+    transform: translateY(-110vh) rotate(35deg);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="emoji">🤍</div>
+
+  <h1>Hasta pronto, Claudia.</h1>
+
+  <div class="estado">
+    Tu aviso fue enviado. 💌
+  </div>
+
+  <p>
+    No importa cuánto tiempo pase,
+    siempre voy a desearte cosas bonitas.
+  </p>
+
+  <p>
+    Cuídate mucho. ❤️
+  </p>
+</div>
+
+<script>
+for (let i = 0; i < 30; i++) {
+  setTimeout(() => {
+    const corazon = document.createElement("div");
+    corazon.className = "corazon";
+
+    const emojis = ["🤍", "❤️", "💕", "✨"];
+    corazon.textContent =
+      emojis[Math.floor(Math.random() * emojis.length)];
+
+    corazon.style.left = Math.random() * 100 + "vw";
+
+    document.body.appendChild(corazon);
+
+    setTimeout(() => corazon.remove(), 5000);
+  }, i * 150);
+}
+</script>
+
+</body>
+</html>
