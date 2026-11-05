@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Para Claudia 💌</title>
+
+<title>Una sorpresa para Claudia 💌</title>
 
 <style>
 * {
@@ -14,9 +15,10 @@
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   background: linear-gradient(135deg, #19152e, #43265c);
   color: white;
-  font-family: Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -141,6 +143,7 @@ button:disabled {
 <body>
 
 <div class="card animacion" id="card">
+
   <div class="etiqueta" id="etiqueta">
     Una pequeña aventura
   </div>
@@ -157,17 +160,25 @@ button:disabled {
 
   <div class="botones" id="botones"></div>
   <div class="estado" id="estado"></div>
+
 </div>
 
 <script>
 
-// CONFIGURACIÓN DE FORMSUBMIT
+// ==================================
+// CONFIGURACIÓN DEL FORMULARIO
+// ==================================
+
 const ENDPOINT =
-"https://formsubmit.io/f/6582b6d9-6408-4b0f-b30c-2ca3130f145c";
+  "https://formsubmit.io/f/6582b6d9-6408-4b0f-b30c-2ca3130f145c";
 
 let intentos = 0;
 let enviando = false;
 let ultimoMovimiento = 0;
+
+// ==================================
+// FUNCIONES GENERALES
+// ==================================
 
 function elemento(id) {
   return document.getElementById(id);
@@ -175,6 +186,7 @@ function elemento(id) {
 
 function boton(texto, accion, secundario = false) {
   const b = document.createElement("button");
+
   b.textContent = texto;
   b.type = "button";
 
@@ -183,12 +195,14 @@ function boton(texto, accion, secundario = false) {
   }
 
   b.addEventListener("click", accion);
+
   elemento("botones").appendChild(b);
 
   return b;
 }
 
 function mostrar(etiqueta, emoji, titulo, texto) {
+
   document.querySelectorAll(".escapando")
     .forEach(b => b.remove());
 
@@ -196,21 +210,26 @@ function mostrar(etiqueta, emoji, titulo, texto) {
   elemento("emoji").textContent = emoji;
   elemento("titulo").textContent = titulo;
   elemento("texto").textContent = texto;
+
   elemento("botones").replaceChildren();
   elemento("estado").textContent = "";
 
   const card = elemento("card");
+
   card.classList.remove("animacion");
   void card.offsetWidth;
   card.classList.add("animacion");
 }
 
+// ==================================
 // PANTALLAS
+// ==================================
 
 function pantalla(n) {
 
   // BIENVENIDA
   if (n === 0) {
+
     mostrar(
       "Una pequeña aventura",
       "💌",
@@ -218,11 +237,15 @@ function pantalla(n) {
       "Fue un gusto haber coincidido contigo.\n\nComo despedida, ayúdame a contestar algunas preguntas."
     );
 
-    boton("Comencemos ✨", () => pantalla(1));
+    boton(
+      "Comencemos ✨",
+      () => pantalla(1)
+    );
   }
 
-  // CHISTE DE LA ABEJA
-  if (n === 1) {
+  // PREGUNTA DE LA ABEJA
+  else if (n === 1) {
+
     mostrar(
       "Pregunta 1",
       "🐝",
@@ -230,10 +253,15 @@ function pantalla(n) {
       "Piénsalo bien. Es una pregunta extremadamente seria."
     );
 
-    boton("No sé, ¿qué hace? 🤨", () => pantalla(2));
+    boton(
+      "No sé, ¿qué hace? 🤨",
+      () => pantalla(2)
+    );
   }
 
-  if (n === 2) {
+  // RESPUESTA DEL CHISTE
+  else if (n === 2) {
+
     mostrar(
       "Respuesta oficial",
       "💃🐝",
@@ -241,11 +269,15 @@ function pantalla(n) {
       "Sí, hice una página web para contarte ese chiste.\n\nPerdón, pero no tanto. 😂"
     );
 
-    boton("Qué chiste tan malo 🙄", () => pantalla(3));
+    boton(
+      "Qué chiste tan malo 🙄",
+      () => pantalla(3)
+    );
   }
 
   // BOTÓN QUE SE ESCAPA
-  if (n === 3) {
+  else if (n === 3) {
+
     mostrar(
       "Pregunta 2",
       "👀",
@@ -253,28 +285,41 @@ function pantalla(n) {
       "Cuidado, esta pregunta tiene un botón con voluntad propia."
     );
 
-    boton("Sí, un poquito ❤️", () => pantalla(4));
+    boton(
+      "Sí, un poquito ❤️",
+      () => pantalla(4)
+    );
 
     intentos = 0;
 
     const travieso = boton(
       "No, para nada 😒",
       () => {
-        if (intentos >= 4) pantalla(4);
+        if (intentos >= 4) {
+          pantalla(4);
+        }
       },
       true
     );
 
     function escapar(e) {
+
       if (intentos >= 4) return;
 
-      if (e.type === "pointerenter" &&
-          e.pointerType === "touch") return;
+      if (
+        e.type === "pointerenter" &&
+        e.pointerType === "touch"
+      ) {
+        return;
+      }
 
       const ahora = Date.now();
-      if (ahora - ultimoMovimiento < 250) return;
-      ultimoMovimiento = ahora;
 
+      if (ahora - ultimoMovimiento < 250) {
+        return;
+      }
+
+      ultimoMovimiento = ahora;
       intentos++;
 
       travieso.classList.add("escapando");
@@ -283,11 +328,13 @@ function pantalla(n) {
       const alto = travieso.offsetHeight || 50;
 
       const maxX = Math.max(
-        0, window.innerWidth - ancho - 20
+        0,
+        window.innerWidth - ancho - 20
       );
 
       const maxY = Math.max(
-        0, window.innerHeight - alto - 20
+        0,
+        window.innerHeight - alto - 20
       );
 
       travieso.style.left =
@@ -300,21 +347,25 @@ function pantalla(n) {
         "¡JAJAJA, casi lo atrapas! 😂";
 
       if (intentos >= 4) {
+
         travieso.textContent =
           "Está bien, ganaste 😭";
 
         travieso.classList.remove("escapando");
+
         travieso.style.left = "";
         travieso.style.top = "";
       }
     }
 
     travieso.addEventListener(
-      "pointerenter", escapar
+      "pointerenter",
+      escapar
     );
 
     travieso.addEventListener(
-      "pointerdown", e => {
+      "pointerdown",
+      e => {
         if (intentos < 4) {
           e.preventDefault();
           escapar(e);
@@ -323,7 +374,9 @@ function pantalla(n) {
     );
   }
 
-  if (n === 4) {
+  // RESPUESTA
+  else if (n === 4) {
+
     mostrar(
       "Sin respuestas incorrectas",
       "❤️",
@@ -331,11 +384,15 @@ function pantalla(n) {
       "No importa cuál hayas elegido.\n\nYo sí voy a recordar con mucho cariño nuestros momentos juntos."
     );
 
-    boton("Continuar ✨", () => pantalla(5));
+    boton(
+      "Continuar ✨",
+      () => pantalla(5)
+    );
   }
 
   // RECUERDOS
-  if (n === 5) {
+  else if (n === 5) {
+
     mostrar(
       "Pregunta 3",
       "💭",
@@ -355,7 +412,8 @@ function pantalla(n) {
     );
   }
 
-  if (n === 6) {
+  else if (n === 6) {
+
     mostrar(
       "Una buena respuesta",
       "✨",
@@ -363,11 +421,15 @@ function pantalla(n) {
       "No hace falta olvidar lo bonito para poder seguir adelante."
     );
 
-    boton("Una pregunta más 👀", () => pantalla(7));
+    boton(
+      "Una pregunta más 👀",
+      () => pantalla(7)
+    );
   }
 
-  // LO QUE MÁS ME GUSTÓ
-  if (n === 7) {
+  // PREGUNTA PERSONAL
+  else if (n === 7) {
+
     mostrar(
       "Pregunta 4",
       "💜",
@@ -387,7 +449,9 @@ function pantalla(n) {
     );
   }
 
-  if (n === 8) {
+  // MENSAJE DE CARIÑO
+  else if (n === 8) {
+
     mostrar(
       "Lo que me llevo",
       "🌷",
@@ -395,11 +459,15 @@ function pantalla(n) {
       "Que sin siquiera intentarlo, lograste inspirarme de muchas maneras.\n\nMe gustó tu forma de pensar, tu personalidad y esa manera tan tuya de ver el mundo.\n\nAunque nuestro tiempo juntos fue distinto a lo que imaginé, me alegra muchísimo haberte conocido."
     );
 
-    boton("Seguir ❤️", () => pantalla(9));
+    boton(
+      "Seguir ❤️",
+      () => pantalla(9)
+    );
   }
 
   // MENSAJE IMPORTANTE
-  if (n === 9) {
+  else if (n === 9) {
+
     mostrar(
       "Algo importante",
       "❤️",
@@ -407,11 +475,15 @@ function pantalla(n) {
       "Lo que siento por ti no desaparece simplemente porque las cosas no hayan resultado como esperábamos.\n\nTe sigo queriendo, Claudia. Y precisamente por eso quiero respetar tu decisión, aunque no sea la que yo hubiera elegido.\n\nNo tienes que cambiar de opinión, darme explicaciones ni responder a esto. No es lo que busco."
     );
 
-    boton("Continuar ✨", () => pantalla(10));
+    boton(
+      "Continuar ✨",
+      () => pantalla(10)
+    );
   }
 
   // DESPEDIDA
-  if (n === 10) {
+  else if (n === 10) {
+
     mostrar(
       "Nuestra despedida",
       "💌",
@@ -427,8 +499,9 @@ function pantalla(n) {
     );
   }
 
-  // BOTÓN FINAL
-  if (n === 11) {
+  // ÚLTIMO BOTÓN
+  else if (n === 11) {
+
     mostrar(
       "Una última cosa",
       "🤍",
@@ -449,12 +522,13 @@ function pantalla(n) {
   }
 
   // CONFIRMACIÓN
-  if (n === 12) {
+  else if (n === 12) {
+
     mostrar(
       "Solo si tú quieres",
       "💌",
       "¿Quieres enviarme un aviso?",
-      "Si confirmas, recibiré un correo diciendo que alguien presionó el botón de esta página.\n\nNo se enviará ningún mensaje personal ni se identificará quién lo pulsó."
+      "Si confirmas, recibiré una notificación de FormSubmit indicando que alguien presionó el botón de esta página.\n\nNo se enviará ningún mensaje personal ni se identificará automáticamente quién lo pulsó."
     );
 
     const confirmar = boton(
@@ -470,87 +544,75 @@ function pantalla(n) {
   }
 }
 
-// ENVIAR NOTIFICACIÓN
+// ==================================
+// ENVÍO CORREGIDO A FORMSUBMIT
+// ==================================
 
-async function enviarAviso(b) {
+function enviarAviso(b) {
+
   if (enviando) return;
 
   enviando = true;
-  b.disabled = true;
-  b.textContent = "Enviando...";
 
-  try {
-    const datos = new FormData();
+  // Crear formulario HTML tradicional
+  const formulario = document.createElement("form");
 
-    datos.append(
-      "Full name",
-      "Aviso desde la página"
-    );
+  formulario.method = "POST";
+  formulario.action = ENDPOINT;
+  formulario.style.display = "none";
 
-    datos.append("Email", "");
-    datos.append("Topic", "Other");
+  // Datos que recibirá FormSubmit
+  const campos = {
+    "Full name": "Aviso desde la página de Claudia",
+    "Email": "",
+    "Topic": "Other",
+    "Message": "Alguien confirmó que quiere hablar contigo desde la página de Claudia."
+  };
 
-    datos.append(
-      "Message",
-      "Alguien confirmó que quiere hablar contigo desde la página de Claudia."
-    );
+  // Agregar campos ocultos
+  for (const [nombre, valor] of Object.entries(campos)) {
 
-    const respuesta = await fetch(ENDPOINT, {
-      method: "POST",
-      body: datos,
-      headers: {
-        "Accept": "application/json"
-      }
-    });
+    const input = document.createElement("input");
 
-    if (!respuesta.ok) {
-      throw new Error("Error de envío");
-    }
+    input.type = "hidden";
+    input.name = nombre;
+    input.value = valor;
 
-    const resultado = await respuesta.json();
-
-    if (resultado.ok !== true) {
-      throw new Error("Envío no confirmado");
-    }
-
-    mostrar(
-      "Aviso enviado",
-      "❤️",
-      "El aviso fue enviado.",
-      "Gracias por confiar en mí.\n\nCuídate mucho, Claudia."
-    );
-
-    boton(
-      "Volver al principio ↺",
-      () => pantalla(0)
-    );
-
-    corazones();
-
-  } catch (error) {
-    elemento("estado").textContent =
-      "No pudimos confirmar el envío. Comprueba tu conexión e inténtalo de nuevo.";
-
-    b.disabled = false;
-    b.textContent = "Reintentar ❤️";
-
-  } finally {
-    enviando = false;
+    formulario.appendChild(input);
   }
+
+  // Agregar formulario al documento
+  document.body.appendChild(formulario);
+
+  // Evitar pulsaciones repetidas
+  b.disabled = true;
+  b.textContent = "Enviando aviso...";
+
+  // Enviar y abrir respuesta de FormSubmit
+  formulario.submit();
 }
 
+// ==================================
 // ANIMACIÓN DE CORAZONES
+// ==================================
 
 function corazones() {
+
   for (let i = 0; i < 25; i++) {
+
     setTimeout(() => {
+
       const corazon =
         document.createElement("div");
 
       corazon.className = "corazon";
 
       const emojis = [
-        "❤️", "💕", "💜", "✨", "🤍"
+        "❤️",
+        "💕",
+        "💜",
+        "✨",
+        "🤍"
       ];
 
       corazon.textContent =
@@ -571,9 +633,13 @@ function corazones() {
   }
 }
 
-// INICIAR PÁGINA
+// ==================================
+// INICIAR LA PÁGINA
+// ==================================
+
 pantalla(0);
 
 </script>
+
 </body>
 </html>
